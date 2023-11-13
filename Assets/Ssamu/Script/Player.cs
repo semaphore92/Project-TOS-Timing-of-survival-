@@ -25,18 +25,27 @@ public class Player : MonoBehaviour
 
     }
 
-    void Update() {
-        if(Input.GetButtonDown("Jump")){
+    void FixedUpdate() {
+        Move();
+        Jump();
+        
+    }
+
+    void Move(){
+
+        float h = Input.GetAxisRaw("Horizontal");
+
+        if(h!=0){
+            Vector2 nextVec = new Vector2(h,0).normalized * speed * Time.fixedDeltaTime;
+            rigid.MovePosition(rigid.position + nextVec);    
+        }
+    }
+
+    void Jump(){
+         if(Input.GetButtonDown("Jump")){
             Debug.Log("jump!!");
             rigid.AddForce(new Vector2(0,10), ForceMode2D.Impulse);
         }
-
-        inputVec.x = Input.GetAxisRaw("Horizontal");    
-    }
-
-    void FixedUpdate() {
-       // Vector2 nextVec = new Vector2(inputVec.x,0).normalized * speed * Time.fixedDeltaTime;
-       // rigid.MovePosition(rigid.position + nextVec);    
     }
 
 
