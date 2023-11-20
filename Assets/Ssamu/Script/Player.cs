@@ -5,55 +5,68 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    
-
-    public Vector2 inputVec;
 
     public float speed;
     public float jumpPower;
+    public bool isGrounded;
+
+    Vector3 moveVector;
 
     Rigidbody2D rigid;
-
-    SpriteRenderer spriter;
 
     Animator anim;
 
     void Awake() {
         rigid = GetComponent<Rigidbody2D>();    
-        spriter = GetComponent<SpriteRenderer>();  
         anim = GetComponent<Animator>();    
 
     }
 
-    void FixedUpdate() {
-        Move();
-        Jump();
-        
+    void Update(){
+        HandleMovement();
+        HandleJump();
+        HandleAttack();
     }
 
-    void Move(){
+    private void HandleMovement() {
+        float moveX = Input.GetAxisRaw("Horizontal");
+        moveVector = new Vector3(moveX, 0f, 0f);
+        transform.Translate(moveVector.normalized * Time.deltaTime * speed);
 
-        float h = Input.GetAxisRaw("Horizontal");
+        anim.SetFloat("RunState", moveX != 0 ? 0.5f : 0);
+    }
 
-        if(h!=0){
-            Vector2 nextVec = new Vector2(h,0).normalized * speed * Time.fixedDeltaTime;
-            rigid.MovePosition(rigid.position + nextVec);    
+    private void HandleJump() {
+        if (Input.GetButtonDown("Jump") && isGrounded) {        
+            rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
+            isGrounded = false;
         }
     }
 
-    void Jump(){
-         if(Input.GetButtonDown("Jump")){
-            Debug.Log("jump!!");
-            rigid.AddForce(new Vector2(0,10), ForceMode2D.Impulse);
+    private void HandleAttack() {
+        if (Input.GetKeyDown(KeyCode.Z)) {
+            anim.SetTrigger("Attack");
         }
     }
 
+    void OnCollisionEnter2D(Collision2D collision) {
+        if (collision.gameObject.CompareTag("Ground")) {
+            isGrounded = true;
+        }
+    }
+
+    void OnCollisionExit2D(Collision2D collision) {
+        if (collision.gameObject.CompareTag("Ground")) {
+            isGrounded = false;
+        }
+    }
 
      void LateUpdate() {
-        anim.SetFloat("Speed", Mathf.Abs(inputVec.x));
-
-        if(inputVec.x != 0){
-            spriter.flipX = inputVec.x < 0 ;
+       
+        if(moveVector.x > 0){
+            transform.localScale = new Vector3(-1, transform.localScale.y, transform.localScale.z);
+        }else if(moveVector.x < 0) {
+            transform.localScale = new Vector3(1, transform.localScale.y, transform.localScale.z);
         }    
     }
 
