@@ -10,7 +10,7 @@ public class Player : MonoBehaviour
     public float jumpPower;
     public bool isGrounded;
 
-    Vector3 moveVector;
+    public Vector3 moveVector;
 
     Rigidbody2D rigid;
 
@@ -30,10 +30,12 @@ public class Player : MonoBehaviour
 
     private void HandleMovement() {
         float moveX = Input.GetAxisRaw("Horizontal");
-        moveVector = new Vector3(moveX, 0f, 0f);
+        float moveY = Input.GetAxisRaw("Vertical");
+
+        moveVector = new Vector3(moveX, moveY, 0f);
         transform.Translate(moveVector.normalized * Time.deltaTime * speed);
 
-        anim.SetFloat("RunState", moveX != 0 ? 0.5f : 0);
+        anim.SetFloat("RunState", moveX != 0 || moveY !=0 ? 0.5f : 0);
     }
 
     private void HandleJump() {

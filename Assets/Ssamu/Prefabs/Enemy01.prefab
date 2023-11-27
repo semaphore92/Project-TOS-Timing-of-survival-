@@ -251,6 +251,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 3
+  isGrounded: 0
   target: {fileID: 0}
 --- !u!1 &2291799101839101162
 GameObject:
