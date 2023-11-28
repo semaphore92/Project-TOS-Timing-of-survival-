@@ -11,19 +11,17 @@ public class Reposition : MonoBehaviour
     }
 
     void OnTriggerExit2D(Collider2D other) {
-        Debug.Log("pass2");
 
         if(!other.CompareTag("Area")){
             return;
         }
 
-        Debug.Log("pass");
         Vector3 playerPos = GameManager.instance.player.transform.position;
         Vector3 myPos = transform.position;
         float diffX = Mathf.Abs(playerPos.x - myPos.x);
         float diffY = Mathf.Abs(playerPos.y - myPos.y);
 
-        Vector3 playerDir = GameManager.instance.player.moveVector;
+        Vector3 playerDir = GameManager.instance.player.inputVec;
         float dirX = playerDir.x < 0 ? -1 : 1;
         float dirY = playerDir.y < 0 ? -1 : 1;
 

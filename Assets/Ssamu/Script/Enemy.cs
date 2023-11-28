@@ -6,18 +6,19 @@ public class Enemy : MonoBehaviour
 {
 
     public float speed;
+    public float health;
+    public float maxHealth;
 
-    public bool isGrounded;
-
-    bool isLive = true;
-
+    bool isLive;
     public Rigidbody2D target;
-
 
     Rigidbody2D rigid;
 
+    Animator anim;
+
     void Awake(){
         rigid = GetComponent<Rigidbody2D>();
+        anim = GetComponent<Animator>();    
     }
 
     void FixedUpdate() {
@@ -26,14 +27,12 @@ public class Enemy : MonoBehaviour
             return;
         }
 
-        if(!isGrounded){
-            return;
-        }
-
         Vector2 dirVec = target.position - rigid.position;
         Vector2 nextVec = dirVec.normalized * speed * Time.fixedDeltaTime;
         rigid.MovePosition(rigid.position + nextVec);
         rigid.velocity = Vector2.zero;
+
+        anim.SetFloat("RunState", 0.5f );
     }
 
     void LateUpdate(){
@@ -51,17 +50,14 @@ public class Enemy : MonoBehaviour
 
     void OnEnable(){
         target = GameManager.instance.player.GetComponent<Rigidbody2D>();  
+        isLive = true;
+        health = maxHealth;
     }
 
-    void OnCollisionEnter2D(Collision2D collision) {
-        if (collision.gameObject.CompareTag("Ground")) {
-            isGrounded = true;
-        }
+    public void Init(SpawnData data){
+        speed = data.speed;
+        maxHealth = data.health;
+        health = data.health;
     }
 
-    void OnCollisionExit2D(Collision2D collision) {
-        if (collision.gameObject.CompareTag("Ground")) {
-            isGrounded = false;
-        }
-    }
 }

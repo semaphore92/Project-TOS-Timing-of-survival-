@@ -2,15 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
 
 public class Player : MonoBehaviour
 {
 
     public float speed;
-    public float jumpPower;
-    public bool isGrounded;
 
-    public Vector3 moveVector;
+    public Vector2 inputVec;
 
     Rigidbody2D rigid;
 
@@ -22,28 +22,20 @@ public class Player : MonoBehaviour
 
     }
 
-    void Update(){
-        HandleMovement();
-        HandleJump();
-        HandleAttack();
+    void FixedUpdate() {
+
+        Vector2 nextVec = inputVec * speed * Time.fixedDeltaTime;
+        rigid.MovePosition(rigid.position + nextVec);   
+
+        anim.SetFloat("RunState", inputVec.x != 0 || inputVec.y !=0 ? 0.5f : 0);
+
+
     }
 
-    private void HandleMovement() {
-        float moveX = Input.GetAxisRaw("Horizontal");
-        float moveY = Input.GetAxisRaw("Vertical");
-
-        moveVector = new Vector3(moveX, moveY, 0f);
-        transform.Translate(moveVector.normalized * Time.deltaTime * speed);
-
-        anim.SetFloat("RunState", moveX != 0 || moveY !=0 ? 0.5f : 0);
+    void OnMove(InputValue value){
+        inputVec = value.Get<Vector2>();
     }
 
-    private void HandleJump() {
-        if (Input.GetButtonDown("Jump") && isGrounded) {        
-            rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
-            isGrounded = false;
-        }
-    }
 
     private void HandleAttack() {
         if (Input.GetKeyDown(KeyCode.Z)) {
@@ -51,23 +43,11 @@ public class Player : MonoBehaviour
         }
     }
 
-    void OnCollisionEnter2D(Collision2D collision) {
-        if (collision.gameObject.CompareTag("Ground")) {
-            isGrounded = true;
-        }
-    }
-
-    void OnCollisionExit2D(Collision2D collision) {
-        if (collision.gameObject.CompareTag("Ground")) {
-            isGrounded = false;
-        }
-    }
-
      void LateUpdate() {
        
-        if(moveVector.x > 0){
+        if(inputVec.x > 0){
             transform.localScale = new Vector3(-1, transform.localScale.y, transform.localScale.z);
-        }else if(moveVector.x < 0) {
+        }else if(inputVec.x < 0) {
             transform.localScale = new Vector3(1, transform.localScale.y, transform.localScale.z);
         }    
     }
