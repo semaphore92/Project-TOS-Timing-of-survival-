@@ -14,6 +14,7 @@ public class PoolManager : MonoBehaviour
         for(int index = 0; index <pools.Length; index++){
             pools[index] = new List<GameObject>();
         }
+
     }
 
 
@@ -36,4 +37,5 @@ public class PoolManager : MonoBehaviour
         
         return select;
     }
+
 }
