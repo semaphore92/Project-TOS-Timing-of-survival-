@@ -11,6 +11,14 @@ public class Weapon : MonoBehaviour
     public int count;
     public float speed;
 
+    float timer;
+
+    Player player;
+
+    void Awake() {
+        player = GetComponentInParent<Player>();    
+    }
+
     void Start() {
         Init();    
     }
@@ -23,7 +31,13 @@ public class Weapon : MonoBehaviour
                 break;
             }
 
-            default:{
+            default : {
+                timer += Time.deltaTime;
+
+                if(timer>speed){
+                    timer = 0f;
+                    Fire();
+                }
                 break;
             }
         }
@@ -55,6 +69,7 @@ public class Weapon : MonoBehaviour
             }
 
             default:{
+                speed = 0.3f;
                 break;
             }
         }
@@ -68,7 +83,7 @@ public class Weapon : MonoBehaviour
             if(index > transform.childCount){
                 bullet =transform.GetChild(index);
             }else{
-                bullet = GameManager.instance.pool.Get(prefabId).transform;
+                bullet = GameManager.instance.wPool.Get(prefabId).transform;
                 bullet.parent = transform;
             }
 
@@ -78,9 +93,25 @@ public class Weapon : MonoBehaviour
             Vector3 rotVec = Vector3.forward * 360 * index/count;
             bullet.Rotate(rotVec);
             bullet.Translate(bullet.up * 1.5f, Space.World);
-            bullet.GetComponent<Bullet>().Init(damage,-1);
+            bullet.GetComponent<Bullet>().Init(damage,-1,Vector3.zero);
 
         }
+    }
+
+    void Fire(){
+        if(!player.scanner.nearestTarget){
+            return;
+        }
+
+        Vector3 targetPos = player.scanner.nearestTarget.position;
+        Vector3 dir = targetPos - transform.position;
+        dir = dir.normalized;
+
+        Transform bullet = GameManager.instance.wPool.Get(prefabId).transform;
+        bullet.position = transform.position;
+        bullet.rotation = Quaternion.FromToRotation(Vector3.up, dir);
+        bullet.GetComponent<Bullet>().Init(damage,count,dir);
+
     }
 
 }

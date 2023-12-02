@@ -15,10 +15,13 @@ public class Player : MonoBehaviour
     Rigidbody2D rigid;
 
     Animator anim;
+    
+    public Scanner scanner;
 
     void Awake() {
         rigid = GetComponent<Rigidbody2D>();    
         anim = GetComponent<Animator>();    
+        scanner = GetComponent<Scanner>();
 
     }
 
@@ -28,8 +31,6 @@ public class Player : MonoBehaviour
         rigid.MovePosition(rigid.position + nextVec);   
 
         anim.SetFloat("RunState", inputVec.x != 0 || inputVec.y !=0 ? 0.5f : 0);
-
-
     }
 
     void OnMove(InputValue value){
