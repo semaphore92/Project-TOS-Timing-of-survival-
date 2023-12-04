@@ -24,11 +24,15 @@ public class Bullet : MonoBehaviour
     }
 
     void OnTriggerEnter2D(Collider2D collision) {
+
+        Debug.Log("A");
         if(!collision.CompareTag("Enemy") || per == -1){
+            Debug.Log("C");
             return;
         }
+        Debug.Log("B");
 
-        per --;
+        per--;
 
         if(per == -1){
             rigid.velocity = Vector2.zero;
