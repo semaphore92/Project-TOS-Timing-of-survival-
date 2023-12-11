@@ -25,7 +25,12 @@ public class Player : MonoBehaviour
 
     }
 
+    
+
     void FixedUpdate() {
+        if(!GameManager.instance.isLive){
+            return;
+        }
 
         Vector2 nextVec = inputVec * speed * Time.fixedDeltaTime;
         rigid.MovePosition(rigid.position + nextVec);   
@@ -34,6 +39,9 @@ public class Player : MonoBehaviour
     }
 
     void OnMove(InputValue value){
+        if(!GameManager.instance.isLive){
+            return;
+        }
         inputVec = value.Get<Vector2>();
     }
 
@@ -45,6 +53,9 @@ public class Player : MonoBehaviour
     }
 
      void LateUpdate() {
+        if(!GameManager.instance.isLive){
+            return;
+        }
        
         if(inputVec.x > 0){
             transform.localScale = new Vector3(-1, transform.localScale.y, transform.localScale.z);

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -7,6 +8,7 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
 
     [Header("# Game Control")]
+    public bool isLive;
     public float gameTime;
     public float maxGameTime = 2 * 10f;
 
@@ -22,9 +24,13 @@ public class GameManager : MonoBehaviour
     public PoolManager pool;
     public WpoolManager wPool;
     public Player player;
+    public LevelUp uiLevelUp;
 
     void Start() {
         health = maxHealth;    
+
+        //임시 스크립트
+        uiLevelUp.Select(0);
     }
 
     void Awake() {
@@ -33,6 +39,10 @@ public class GameManager : MonoBehaviour
 
     void Update() {
 
+        if(!isLive){
+            return;
+        }
+        
         gameTime += Time.deltaTime;
 
         if(gameTime > maxGameTime){
@@ -48,6 +58,19 @@ public class GameManager : MonoBehaviour
         if(exp == nextExp[level]){
             level++;
             exp = 0;
+            uiLevelUp.Show();
         }
+    }
+
+    public void Stop(){
+        isLive = false;
+        Time.timeScale = 0;
+    
+    }
+
+    public void Resume(){
+        isLive = true;
+        Time.timeScale = 1; 
+    
     }
 }
