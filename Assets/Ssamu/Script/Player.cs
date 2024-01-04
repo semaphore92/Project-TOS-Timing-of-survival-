@@ -64,7 +64,7 @@ public class Player : MonoBehaviour
         }    
     }
 
-    void OnCollisionStay2D(Collider2D collision){
+    private void OnCollisionStay2D(Collision2D other) {
         if(!GameManager.instance.isLive){
             return;
         }
@@ -77,6 +77,7 @@ public class Player : MonoBehaviour
             }
 
             //Dead
+            GameManager.instance.GameOver();
 
         }
     }
